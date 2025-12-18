@@ -1,5 +1,5 @@
 package com.example.demo.security;
 
-public interface JwtAuthenticationFilter{
+public interface JwtTokenProvider{
     
-}JwtTokenProvider
+}
