@@ -1,5 +1,5 @@
 package com.example.demo.repository;
 
-public class TransferRuleRepository{
+public interface TransferRuleRepository{
     
 }
