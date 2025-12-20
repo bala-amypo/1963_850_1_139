@@ -1,5 +1,7 @@
 package com.example.demo.security;
 
-public interface Role{
-    
+public enum Role {
+    ADMIN,
+    EVALUATOR,
+    STUDENT
 }
