@@ -8,6 +8,7 @@ import com.example.demo.service.TransferValidationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class TransferValidationServiceImpl implements TransferValidationService {
@@ -27,10 +28,15 @@ public class TransferValidationServiceImpl implements TransferValidationService 
         return response;
     }
 
-    // This adds the missing method required by the Interface
+    // This satisfies the missing method error you just saw
     @Override
-    public java.util.List<TransferEvaluationResponse> getEvaluationsByCourse(Long courseId) {
-        // Return an empty list for now just to pass compilation
+    public TransferEvaluationResponse getEvaluationById(Long id) {
+        // Returns an empty response for now to allow compilation
+        return new TransferEvaluationResponse();
+    }
+
+    @Override
+    public List<TransferEvaluationResponse> getEvaluationsByCourse(Long courseId) {
         return new ArrayList<>();
     }
 }
