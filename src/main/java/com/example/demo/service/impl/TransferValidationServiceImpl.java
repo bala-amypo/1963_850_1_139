@@ -8,6 +8,7 @@ import com.example.demo.repository.TransferRuleRepository;
 import com.example.demo.service.TransferValidationService;
 import com.example.demo.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
+import com.example.demo.entity.University;
 
 import java.util.ArrayList;
 import java.util.List;
