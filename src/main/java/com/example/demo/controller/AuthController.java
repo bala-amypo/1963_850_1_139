@@ -15,7 +15,6 @@ public class AuthController {
     private final UserService userService;
     private final JwtTokenProvider tokenProvider;
 
-    // Rule 7.1: Constructor Injection
     public AuthController(UserService userService, JwtTokenProvider tokenProvider) {
         this.userService = userService;
         this.tokenProvider = tokenProvider;
@@ -29,8 +28,6 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
         User user = userService.findByEmail(request.getEmail());
-        // In a real app, add password check here. 
-        // For now, we generate the token as per Rule 8.1
         String token = tokenProvider.createToken(user.getEmail(), user.getRoles().iterator().next());
         return ResponseEntity.ok(new AuthResponse(token, user.getEmail(), user.getRoles().iterator().next()));
     }
