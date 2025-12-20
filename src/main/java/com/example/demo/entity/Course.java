@@ -1,14 +1,6 @@
-package com.example.demo.entity;
-
-import jakarta.persistence.*;
-import lombok.*;
-
 @Entity
 @Data
-@Table(name = "courses", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"university_id", "courseCode"}) // Unique constraint
-})
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
+@Table(name = "courses")
 public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,8 +12,16 @@ public class Course {
 
     private String courseCode;
     private String courseName;
-    private Integer creditHours;
+    private Double credits; // MUST be 'credits' to match DataLoader
     private String description;
-    private String department;
     private Boolean active = true;
+
+    // Manual setter if Lombok fails
+    public void setCredits(Double credits) {
+        this.credits = credits;
+    }
+    
+    public Double getCredits() {
+        return this.credits;
+    }
 }

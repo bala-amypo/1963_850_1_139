@@ -1,22 +1,15 @@
-package com.example.demo.entity;
-
-import jakarta.persistence.*;
-import lombok.*;
-
 @Entity
-@Table(name = "universities")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
+@Data
 public class University {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(unique = true, nullable = false)
     private String name;
+    private String location; // Ensure this field exists
+    private Boolean active = true;
 
-    private String accreditationLevel;
-    private String country;
-
-    @Column(nullable = false)
-    private Boolean active = true; // Defaults to true
+    // Manual setter if Lombok fails
+    public void setLocation(String location) {
+        this.location = location;
+    }
 }
