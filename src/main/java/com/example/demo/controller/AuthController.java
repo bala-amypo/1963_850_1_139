@@ -1,34 +1,41 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.AuthRequest;
-import com.example.demo.dto.AuthResponse;
 import com.example.demo.entity.User;
-import com.example.demo.security.JwtTokenProvider;
 import com.example.demo.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 public class AuthController {
 
-    private final UserService userService;
-    private final JwtTokenProvider tokenProvider;
-
-    public AuthController(UserService userService, JwtTokenProvider tokenProvider) {
-        this.userService = userService;
-        this.tokenProvider = tokenProvider;
-    }
+    @Autowired
+    private UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody User user) {
-        return ResponseEntity.ok(userService.registerUser(user));
+    public ResponseEntity<?> register(@RequestBody User user) {
+        try {
+            return ResponseEntity.ok(userService.registerUser(user));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
-        User user = userService.findByEmail(request.getEmail());
-        String token = tokenProvider.createToken(user.getEmail(), user.getRoles().iterator().next());
-        return ResponseEntity.ok(new AuthResponse(token, user.getEmail(), user.getRoles().iterator().next()));
+    public ResponseEntity<?> login(@RequestBody Map<String, String> loginRequest) {
+        String email = loginRequest.get("email");
+        String password = loginRequest.get("password");
+
+        // The Fix: Use .orElse(null) or .isPresent() to handle the Optional
+        User user = userService.findByEmail(email).orElse(null);
+
+        if (user != null && user.getPassword().equals(password)) {
+            return ResponseEntity.ok("Login successful! Welcome " + user.getEmail());
+        } else {
+            return ResponseEntity.status(401).body("Invalid email or password");
+        }
     }
 }
