@@ -1,5 +1,10 @@
 package com.example.demo.service;
 
+import com.example.demo.entity.TransferEvaluationResult;
+import java.util.List;
+
 public interface TransferValidationService {
-    boolean validateTransfer(Long sourceCourseId, Long targetCourseId);
+    TransferEvaluationResult evaluateByCourseIds(Long sourceId, Long targetId);
+    TransferEvaluationResult getEvaluationById(Long id);
+    List<TransferEvaluationResult> getEvaluationsByCourse(Long courseId);
 }
