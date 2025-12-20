@@ -1,4 +1,5 @@
 package com.example.demo.service;
+
 import com.example.demo.entity.University;
 import java.util.List;
 
@@ -6,6 +7,6 @@ public interface UniversityService {
     University createUniversity(University university);
     University updateUniversity(Long id, University university);
     University getById(Long id);
-    List<University> getAllUniversities();
+    List<University> getAll();
     void deactivate(Long id);
 }
