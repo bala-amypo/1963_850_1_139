@@ -1,17 +1,17 @@
 package com.example.demo.dto;
 
-import java.util.List;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import java.util.List;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class TransferEvaluationResponse {
-    private Double totalTransferableCredits;
-    private List<String> acceptedMappings;
-    private List<String> missingRequirements;
-    private String status; // Usually "APPROVED", "REJECTED", or "PENDING"
-    private String remarks;
+    private boolean transferable; // Changed from 'isTransferable' to ensure 'setTransferable'
+    private Double totalCredits;
+    private String status;
+    private List<String> details;
+    
+    // Manual setter to be safe against the compiler error
+    public void setIsTransferable(boolean transferable) {
+        this.transferable = transferable;
+    }
 }
