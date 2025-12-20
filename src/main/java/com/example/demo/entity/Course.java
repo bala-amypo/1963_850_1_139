@@ -1,6 +1,15 @@
+package com.example.demo.entity;
+
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+
 @Entity
 @Data
 @Table(name = "courses")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -12,16 +21,7 @@ public class Course {
 
     private String courseCode;
     private String courseName;
-    private Double credits; // MUST be 'credits' to match DataLoader
+    private Double credits; 
     private String description;
     private Boolean active = true;
-
-    // Manual setter if Lombok fails
-    public void setCredits(Double credits) {
-        this.credits = credits;
-    }
-    
-    public Double getCredits() {
-        return this.credits;
-    }
 }

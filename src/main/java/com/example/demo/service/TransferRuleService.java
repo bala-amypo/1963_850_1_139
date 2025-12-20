@@ -4,9 +4,10 @@ import com.example.demo.entity.TransferRule;
 import java.util.List;
 
 public interface TransferRuleService {
-    // Rule 6.5: Create a transfer mapping rule
     TransferRule createRule(TransferRule rule);
-    
-    // Find a rule based on the two universities involved
-    TransferRule getRule(Long sourceId, Long targetId);
+    List<TransferRule> getAllRules();
+    TransferRule getById(Long id);
+    TransferRule updateRule(Long id, TransferRule updatedRule);
+    TransferRule getRuleByPair(Long sourceId, Long targetId); // Matches your Impl code
+    void deactivate(Long id);
 }

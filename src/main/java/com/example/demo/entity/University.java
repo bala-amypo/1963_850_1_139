@@ -1,15 +1,19 @@
+package com.example.demo.entity;
+
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+
 @Entity
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class University {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private String location; // Ensure this field exists
+    private String location;
     private Boolean active = true;
-
-    // Manual setter if Lombok fails
-    public void setLocation(String location) {
-        this.location = location;
-    }
 }
