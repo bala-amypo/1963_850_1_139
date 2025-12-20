@@ -7,6 +7,6 @@ public interface UniversityService {
     University createUniversity(University university);
     University updateUniversity(Long id, University university);
     University getById(Long id);
-    List<University> getAll();
+    List<University> getAllUniversities(); // Renamed to match Controller
     void deactivate(Long id);
 }

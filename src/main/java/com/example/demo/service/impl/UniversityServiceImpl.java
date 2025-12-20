@@ -30,11 +30,11 @@ public class UniversityServiceImpl implements UniversityService {
     @Override
     public University getById(Long id) {
         return universityRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("University not found with id: " + id));
+                .orElseThrow(() -> new RuntimeException("University not found"));
     }
 
     @Override
-    public List<University> getAll() {
+    public List<University> getAllUniversities() {
         return universityRepository.findAll();
     }
 
