@@ -9,4 +9,3 @@ public interface UniversityService {
     List<University> getAllUniversities();
     void deactivate(Long id);
 }
-CourseService.java
