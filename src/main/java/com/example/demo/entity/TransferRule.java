@@ -1,27 +1,28 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
 
 @Entity
 @Table(name = "transfer_rules")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
+@Data
 public class TransferRule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // These associations allow findBySourceCourseId to work automatically
     @ManyToOne
-    @JoinColumn(name = "source_university_id")
-    private University sourceUniversity;
+    @JoinColumn(name = "source_course_id")
+    private Course sourceCourse;
 
     @ManyToOne
-    @JoinColumn(name = "target_university_id")
-    private University targetUniversity;
+    @JoinColumn(name = "target_course_id")
+    private Course targetCourse;
 
     private Double minimumOverlapPercentage;
     private Integer creditHourTolerance;
-    private Boolean active = true;
     private String minGradeRequired;
-private Double transferCredits;
+    private Double transferCredits;
+    private Boolean active;
 }
