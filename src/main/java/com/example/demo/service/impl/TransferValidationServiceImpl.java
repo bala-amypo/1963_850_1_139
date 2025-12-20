@@ -1,60 +1,68 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.dto.*;
-import com.example.demo.entity.*;
-import com.example.demo.repository.*;
+import com.example.demo.dto.TransferEvaluationResponse;
+import com.example.demo.entity.Course;
+import com.example.demo.entity.TransferRule;
+import com.example.demo.repository.CourseRepository;
+import com.example.demo.repository.TransferRuleRepository;
 import com.example.demo.service.TransferValidationService;
 import com.example.demo.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TransferValidationServiceImpl implements TransferValidationService {
 
-    private final UniversityRepository universityRepository;
     private final CourseRepository courseRepository;
     private final TransferRuleRepository transferRuleRepository;
 
-    public TransferValidationServiceImpl(UniversityRepository universityRepository, 
-                                         CourseRepository courseRepository, 
+    // Rule 6: Constructor Injection only
+    public TransferValidationServiceImpl(CourseRepository courseRepository, 
                                          TransferRuleRepository transferRuleRepository) {
-        this.universityRepository = universityRepository;
         this.courseRepository = courseRepository;
         this.transferRuleRepository = transferRuleRepository;
     }
 
     @Override
-    public TransferEvaluationResponse evaluateTransfer(TransferEvaluationRequest request) {
-        // 1. Validate Universities exist (Rule 6.6)
-        universityRepository.findById(request.getSourceProgramId()) // Using ID from DTO
-            .orElseThrow(() -> new ResourceNotFoundException("Source university not found"));
-        
-        universityRepository.findById(request.getTargetProgramId())
-            .orElseThrow(() -> new ResourceNotFoundException("Target university not found"));
+    public TransferEvaluationResponse evaluateByCourseIds(Long sourceCourseId, Long targetCourseId) {
+        // 1. Fetch courses or throw "not found" (Rule 6.2/6.6)
+        Course source = courseRepository.findById(sourceCourseId)
+                .orElseThrow(() -> new ResourceNotFoundException("Source course not found"));
+        Course target = courseRepository.findById(targetCourseId)
+                .orElseThrow(() -> new ResourceNotFoundException("Target course not found"));
 
-        double totalCredits = 0.0;
-        List<String> accepted = new ArrayList<>();
+        // 2. Logic: Check if a transfer rule exists between these specific courses
+        // This is where you'd check your mapping table
+        boolean isTransferable = transferRuleRepository.existsBySourceCourseIdAndTargetCourseId(sourceCourseId, targetCourseId);
 
-        // 2. Core Logic: Sum up credits for courses that exist in our system
-        for (TransferEvaluationRequest.CompletedCourseDTO item : request.getCompletedCourses()) {
-            // Find course by code
-            Course course = courseRepository.findByUniversityIdAndCourseCode(request.getSourceProgramId(), item.getCode())
-                .orElse(null);
-
-            if (course != null) {
-                totalCredits += item.getCredits();
-                accepted.add("Matched: " + item.getCode());
-            }
-        }
-
-        // 3. Prepare Final Response
+        // 3. Build Response
         TransferEvaluationResponse response = new TransferEvaluationResponse();
-        response.setTotalTransferableCredits(totalCredits);
-        response.setAcceptedMappings(accepted);
-        response.setStatus(totalCredits >= 15.0 ? "APPROVED" : "PENDING");
-        response.setRemarks("Evaluation completed based on university rules.");
+        response.setTotalTransferableCredits(isTransferable ? source.getCredits() : 0.0);
+        response.setStatus(isTransferable ? "APPROVED" : "REJECTED");
+        
+        List<String> mappings = new ArrayList<>();
+        if (isTransferable) {
+            mappings.add(source.getCourseCode() + " -> " + target.getCourseCode());
+        }
+        response.setAcceptedMappings(mappings);
+        response.setRemarks(isTransferable ? "Course matches institutional transfer rules." : "No valid mapping found.");
 
         return response;
+    }
+
+    @Override
+    public TransferEvaluationResponse getEvaluationById(Long id) {
+        // Implementation for retrieving a stored evaluation
+        // (Requires a TransferEvaluationRepository)
+        throw new UnsupportedOperationException("Fetch logic depends on your Evaluation Entity storage.");
+    }
+
+    @Override
+    public List<TransferEvaluationResponse> getEvaluationsByCourse(Long courseId) {
+        // Implementation for filtering evaluations by a specific course
+        return new ArrayList<>(); 
     }
 }
