@@ -31,4 +31,11 @@ public class UniversityServiceImpl implements UniversityService {
     public List<University> getAllUniversities() {
         return universityRepository.findAll();
     }
+    @Override
+public void deactivate(Long id) {
+    University university = universityRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("University not found"));
+    university.setActive(false);
+    universityRepository.save(university);
+}
 }

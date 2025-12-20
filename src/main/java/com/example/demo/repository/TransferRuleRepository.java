@@ -7,4 +7,5 @@ import java.util.Optional;
 public interface TransferRuleRepository extends JpaRepository<TransferRule, Long> {
     // This fixed the 'cannot find symbol' in your ServiceImpl
     Optional<TransferRule> findBySourceCourseIdAndTargetCourseId(Long sourceId, Long targetId);
+    boolean existsBySourceCourseIdAndTargetCourseId(Long sourceId, Long targetId);
 }

@@ -22,4 +22,6 @@ public class TransferRule {
     private Double minimumOverlapPercentage;
     private Integer creditHourTolerance;
     private Boolean active = true;
+    private String minGradeRequired;
+private Double transferCredits;
 }

@@ -19,4 +19,5 @@ public class CourseContentTopic {
     private String topicName;
 
     private Double weightPercentage;
+    private String name; // Ensure this field exists for getName() to work
 }
