@@ -65,4 +65,15 @@ public class TransferValidationServiceImpl implements TransferValidationService 
         // Implementation for filtering evaluations by a specific course
         return new ArrayList<>(); 
     }
+    @Override
+public University updateUniversity(Long id, University universityDetails) {
+    University university = universityRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("University not found with id: " + id));
+    
+    university.setName(universityDetails.getName());
+    university.setLocation(universityDetails.getLocation());
+    university.setActive(universityDetails.getActive());
+    
+    return universityRepository.save(university);
+}
 }
