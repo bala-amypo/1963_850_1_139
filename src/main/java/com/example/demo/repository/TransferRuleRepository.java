@@ -7,6 +7,6 @@ import java.util.Optional;
 
 @Repository
 public interface TransferRuleRepository extends JpaRepository<TransferRule, Long> {
-    // The underscore _Id tells Spring to look for the ID field inside the Course object
+    // This naming convention maps to TransferRule -> sourceCourse (entity) -> id (field)
     Optional<TransferRule> findBySourceCourse_IdAndTargetCourse_Id(Long sourceCourseId, Long targetCourseId);
 }

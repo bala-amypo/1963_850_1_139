@@ -12,10 +12,11 @@ public class TransferValidationServiceImpl implements TransferValidationService 
     @Autowired
     private TransferRuleRepository transferRuleRepository;
 
+    @Override
     public boolean validateTransfer(Long sourceCourseId, Long targetCourseId) {
-        // Updated to match the Repository method name
+        // We call the repository method and check if the rule exists and is active
         return transferRuleRepository.findBySourceCourse_IdAndTargetCourse_Id(sourceCourseId, targetCourseId)
-                .map(TransferRule::getActive)
+                .map(rule -> rule.getActive() != null && rule.getActive())
                 .orElse(false);
     }
 }
