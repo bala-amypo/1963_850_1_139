@@ -12,54 +12,48 @@ import java.util.List;
 @Service
 public class TransferValidationServiceImpl implements TransferValidationService {
 
-    private final ProgramRepository programRepository;
+    private final UniversityRepository universityRepository;
     private final CourseRepository courseRepository;
-    private final CourseMappingRepository mappingRepository;
+    private final TransferRuleRepository transferRuleRepository;
 
-    public TransferValidationServiceImpl(ProgramRepository programRepository, 
+    public TransferValidationServiceImpl(UniversityRepository universityRepository, 
                                          CourseRepository courseRepository, 
-                                         CourseMappingRepository mappingRepository) {
-        this.programRepository = programRepository;
+                                         TransferRuleRepository transferRuleRepository) {
+        this.universityRepository = universityRepository;
         this.courseRepository = courseRepository;
-        this.mappingRepository = mappingRepository;
+        this.transferRuleRepository = transferRuleRepository;
     }
 
     @Override
     public TransferEvaluationResponse evaluateTransfer(TransferEvaluationRequest request) {
-        // 1. Validate Programs (Rule 6.6)
-        programRepository.findById(request.getSourceProgramId())
-            .orElseThrow(() -> new ResourceNotFoundException("Source program not found"));
-        programRepository.findById(request.getTargetProgramId())
-            .orElseThrow(() -> new ResourceNotFoundException("Target program not found"));
+        // 1. Validate Universities exist (Rule 6.6)
+        universityRepository.findById(request.getSourceProgramId()) // Using ID from DTO
+            .orElseThrow(() -> new ResourceNotFoundException("Source university not found"));
+        
+        universityRepository.findById(request.getTargetProgramId())
+            .orElseThrow(() -> new ResourceNotFoundException("Target university not found"));
 
         double totalCredits = 0.0;
         List<String> accepted = new ArrayList<>();
-        List<String> missing = new ArrayList<>();
 
-        // 2. Logic: Resolve courses by code and apply mappings
+        // 2. Core Logic: Sum up credits for courses that exist in our system
         for (TransferEvaluationRequest.CompletedCourseDTO item : request.getCompletedCourses()) {
-            Course sourceCourse = courseRepository.findByCodeIgnoreCase(item.getCode()).orElse(null);
+            // Find course by code
+            Course course = courseRepository.findByUniversityIdAndCourseCode(request.getSourceProgramId(), item.getCode())
+                .orElse(null);
 
-            if (sourceCourse != null) {
-                List<CourseMapping> mappings = mappingRepository.findBySourceCourseId(sourceCourse.getId());
-                if (!mappings.isEmpty()) {
-                    totalCredits += item.getCredits();
-                    accepted.add("Accepted: " + item.getCode());
-                } else {
-                    missing.add("No mapping for: " + item.getCode());
-                }
-            } else {
-                missing.add("Invalid code: " + item.getCode());
+            if (course != null) {
+                totalCredits += item.getCredits();
+                accepted.add("Matched: " + item.getCode());
             }
         }
 
-        // 3. Set result status (Rule 6.6)
+        // 3. Prepare Final Response
         TransferEvaluationResponse response = new TransferEvaluationResponse();
         response.setTotalTransferableCredits(totalCredits);
         response.setAcceptedMappings(accepted);
-        response.setMissingRequirements(missing);
-        response.setStatus(totalCredits > 12.0 ? "APPROVED" : "PENDING"); // Example threshold
-        response.setRemarks("Validation complete.");
+        response.setStatus(totalCredits >= 15.0 ? "APPROVED" : "PENDING");
+        response.setRemarks("Evaluation completed based on university rules.");
 
         return response;
     }
