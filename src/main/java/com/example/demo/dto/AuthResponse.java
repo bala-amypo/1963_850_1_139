@@ -11,4 +11,5 @@ public class AuthResponse {
     private String accessToken;
     private String tokenType = "Bearer";
     private String email;
+    private String role; // <--- Intha field thaan dataset-padi missing!
 }
