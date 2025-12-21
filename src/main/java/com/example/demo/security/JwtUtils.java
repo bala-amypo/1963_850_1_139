@@ -9,7 +9,7 @@ import java.util.Date;
 @Component
 public class JwtUtils {
     private final String jwtSecret = "universityValidatorSecretKeyForJwtAuthentication";
-    private final int jwtExpirationMs = 86400000; // 24 hours
+    private final int jwtExpirationMs = 86400000; // 24 Hours
 
     private final Key key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
 
