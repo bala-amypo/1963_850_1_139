@@ -1,6 +1,5 @@
 package com.example.demo.config;
 
-import com.example.demo.security.CustomUserDetailsService;
 import com.example.demo.security.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,20 +32,24 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.disable()) // Stateless API-ku CSRF disable pannanum
+        http
+            .csrf(csrf -> csrf.disable()) // Swagger-la test panna ithu disable-la thaan irukkanum
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                // CHANGE: Inga thaan namma "/api/auth/**"-ah "/auth/**"-nu mathi irukkom
+                // Public endpoints - No Token Needed
                 .requestMatchers("/auth/**", "/status", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                 
-                // Role based protection
-                .requestMatchers("/api/transfers/**").hasAnyRole("EVALUATOR", "ADMIN")
+                // Role based protection - Must have ADMIN or EVALUATOR role
+                // Neenga University create panna thalaivara irukkanum (ADMIN/EVALUATOR)
+                .requestMatchers("/api/universities/**", "/api/transfers/**", "/api/courses/**").hasAnyRole("ADMIN", "EVALUATOR")
                 
-                // Mattha ella requests-kum authentication mukkiyam
+                // Mattha ella requests-kum login/token mukkiyam
                 .anyRequest().authenticated()
             );
         
+        // JWT Filter-ah auth filter-ku munnadi vaikkanum
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+        
         return http.build();
     }
 }
