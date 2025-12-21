@@ -3,7 +3,7 @@ package com.example.demo.service.impl;
 import com.example.demo.dto.AuthRequest;
 import com.example.demo.dto.AuthResponse;
 import com.example.demo.entity.User;
-import com.example.demo.security.JwtTokenProvider; // Intha file neenga security-la create panni irukanum
+import com.example.demo.security.JwtTokenProvider;
 import com.example.demo.service.AuthService;
 import com.example.demo.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -23,13 +23,13 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public User register(User user) {
-        // UserService-la irukka registerUser logic-ah call panrom
+        // Rule: Password encoding and user creation in service layer
         return userService.registerUser(user);
     }
 
     @Override
     public AuthResponse login(AuthRequest authRequest) {
-        // Step 4.6: Login logic via AuthenticationManager
+        // Step 4.6 & Rule 7.1: Authenticate via AuthenticationManager
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         authRequest.getEmail(),
@@ -39,14 +39,20 @@ public class AuthServiceImpl implements AuthService {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        // JWT Token generate panrom
-        // authentication pathil authentication.getName() kudunga
-String jwt = tokenProvider.generateToken(authentication.getName());
+        // JWT Token generate panrom using the email/username
+        String jwt = tokenProvider.generateToken(authentication.getName());
 
-        // AuthResponse DTO form-la return panrom
+        // Extracting the Role (Dataset Rule 7.1 requirement)
+        String role = authentication.getAuthorities().stream()
+                .map(grantedAuthority -> grantedAuthority.getAuthority())
+                .findFirst()
+                .orElse("ROLE_USER");
+
+        // Building the AuthResponse
         AuthResponse response = new AuthResponse();
         response.setAccessToken(jwt);
         response.setEmail(authRequest.getEmail());
+        response.setRole(role); // Now the role is included!
         response.setTokenType("Bearer");
         
         return response;
