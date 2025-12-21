@@ -1,9 +1,7 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Data
@@ -15,16 +13,18 @@ public class Course {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
-
-    // Intha field thaan miss aayiruku!
-    @Column(unique = true, nullable = false)
-    private String code; 
-
-    private Integer credits;
-
+    private String courseName; // Renamed from name
+    private String courseCode; // Renamed from code
+    private Integer creditHours; // Renamed from credits
+    
     @Column(length = 1000)
     private String description;
+
+    private Boolean active = true; // Added missing field
+
+    @ManyToOne
+    @JoinColumn(name = "university_id")
+    private University university; // Added missing relation for transfer logic
 
     @ManyToOne
     @JoinColumn(name = "program_id")
