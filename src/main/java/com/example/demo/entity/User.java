@@ -5,10 +5,14 @@ import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.Set;
 import org.hibernate.annotations.CreationTimestamp;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Entity
 @Table(name = "users")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

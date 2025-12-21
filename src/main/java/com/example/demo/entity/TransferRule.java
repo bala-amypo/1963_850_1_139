@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 @Entity
 @Table(name = "transfer_rules")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class TransferRule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
