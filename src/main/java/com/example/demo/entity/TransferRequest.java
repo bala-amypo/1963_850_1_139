@@ -3,9 +3,13 @@ package com.example.demo.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.util.Date;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Entity
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "transfer_requests")
 public class TransferRequest {
     @Id

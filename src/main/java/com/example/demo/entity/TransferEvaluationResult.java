@@ -2,12 +2,16 @@ package com.example.demo.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 import java.sql.Timestamp;
 import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Table(name = "transfer_evaluation_results")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class TransferEvaluationResult {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
