@@ -40,7 +40,8 @@ public class AuthServiceImpl implements AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // JWT Token generate panrom
-        String jwt = tokenProvider.generateToken(authentication);
+        // authentication pathil authentication.getName() kudunga
+String jwt = tokenProvider.generateToken(authentication.getName());
 
         // AuthResponse DTO form-la return panrom
         AuthResponse response = new AuthResponse();

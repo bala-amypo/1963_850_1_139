@@ -7,4 +7,5 @@ import java.util.List;
 public interface TransferRuleRepository extends JpaRepository<TransferRule, Long> {
     // Exact method name from constraint
     List<TransferRule> findBySourceUniversityIdAndTargetUniversityIdAndActiveTrue(Long sourceId, Long targetId);
+    List<TransferRule> findBySourceUniversityIdAndTargetUniversityId(Long sourceUniversityId, Long targetUniversityId);
 }
