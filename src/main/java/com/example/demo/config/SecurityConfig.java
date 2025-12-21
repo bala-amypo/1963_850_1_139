@@ -1,37 +1,15 @@
 package com.example.demo.config;
 
+import com.example.demo.security.JwtAuthenticationFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-
-@Configuration
-@EnableWebSecurity
-public class SecurityConfig {
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(); // Password-ah encrypt panna ithu thevai
-    }
-
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-            .csrf(csrf -> csrf.disable()) // API-ku CSRF thevai illai
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**").permitAll() // Registration/Login-ku yaaru venaalum varalaam
-                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll() // Swagger UI-ku permission
-                .anyRequest().authenticated() // Maththa ellaathukkum login pannanum
-            );
-        return http.build();
-    }
-}
-// ... existing imports ...
-import com.example.demo.security.JwtAuthenticationFilter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -43,19 +21,25 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
+        // Passwords-ah safe-aa encrypt panna BCrypt use panrom
         return new BCryptPasswordEncoder();
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())
+            .csrf(csrf -> csrf.disable()) // REST API-ku CSRF thevai illai
+            
+            // JWT use pannuvathal session state-ah store panna koodathu
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                .anyRequest().authenticated()
+                .requestMatchers("/api/auth/**").permitAll() // Register & Login-ku Permission undu
+                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll() // Documentation access
+                .anyRequest().authenticated() // Maththa ella API-kkum Token thevai
             )
-            // Intha line thaan JWT filter-ah add pannuthu
+            
+            // UsernamePasswordAuthenticationFilter-ku munnadi namma JWT filter-ah run panna vaikkurom
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         
         return http.build();
