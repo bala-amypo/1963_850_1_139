@@ -1,26 +1,32 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "courses", uniqueConstraints = {@UniqueConstraint(columnNames = {"university_id", "courseCode"})})
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "courses")
 public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "university_id")
-    private University university;
+    private String name;
 
-    private String courseCode;
-    private String courseName;
-    private Integer creditHours;
+    // Intha field thaan miss aayiruku!
+    @Column(unique = true, nullable = false)
+    private String code; 
+
+    private Integer credits;
+
+    @Column(length = 1000)
     private String description;
-    private String department;
 
-    @Column(nullable = false)
-    private Boolean active = true;
+    @ManyToOne
+    @JoinColumn(name = "program_id")
+    private Program program;
 }
