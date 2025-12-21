@@ -26,16 +26,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
-            // Inga token validate panni, security context-la set panrom
-            // Real project-la user details-ah DB-la irunthu eduthu check pannanum. 
-            // Ippo simple-aa email-ah mattum vachupom.
-            String email = jwtUtils.generateToken(token); // Simple check for now
-            
-            UsernamePasswordAuthenticationToken authentication = 
-                new UsernamePasswordAuthenticationToken(email, null, new ArrayList<>());
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            if (jwtUtils.validateToken(token)) {
+                String email = jwtUtils.getEmailFromToken(token); // Corrected here
+                
+                UsernamePasswordAuthenticationToken authentication = 
+                    new UsernamePasswordAuthenticationToken(email, null, new ArrayList<>());
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
         }
-
         filterChain.doFilter(request, response);
     }
 }
