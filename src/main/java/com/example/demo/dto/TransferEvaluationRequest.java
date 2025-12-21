@@ -5,11 +5,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class TransferEvaluationRequest {
-    private Long sourceUniversityId;
-    private Long targetUniversityId;
-    private Long courseId;
-    private Double gpa; 
+    // Service-la intha names thaan ethirpaakiraanga
+    private Long sourceCourseId; 
+    private Long targetCourseId;
+    private Double gpa; // GPA logic evaluation-ku venum na vatchukonga
 }

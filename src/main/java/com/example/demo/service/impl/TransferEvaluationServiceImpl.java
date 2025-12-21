@@ -21,7 +21,7 @@ public class TransferEvaluationServiceImpl implements TransferEvaluationService 
 
     @Override
     public TransferEvaluationResponse evaluateTransfer(TransferEvaluationRequest request) {
-        // Fix: Call the evaluation logic using IDs from request DTO
+        // This now matches the fields in the DTO above perfectly
         return evaluateTransfer(request.getSourceCourseId(), request.getTargetCourseId());
     }
 
@@ -32,12 +32,11 @@ public class TransferEvaluationServiceImpl implements TransferEvaluationService 
         Course target = courseRepo.findById(targetId)
                 .orElseThrow(() -> new RuntimeException("not found"));
 
-        // Step 0.3: Check active status
+        // Step 0.3: Check active status (Ensure Course entity has 'active' field)
         if (!source.getActive() || !target.getActive()) {
             throw new RuntimeException("active");
         }
 
-        // Use find method from TransferRuleRepository
         var rules = ruleRepo.findBySourceUniversityIdAndTargetUniversityIdAndActiveTrue(
                 source.getUniversity().getId(), target.getUniversity().getId());
 
@@ -64,6 +63,7 @@ public class TransferEvaluationServiceImpl implements TransferEvaluationService 
 
     @Override
     public List<TransferEvaluationResult> getEvaluationsByCourseId(Long courseId) {
+        // Ensure resultRepo has findBySourceCourseId and imports java.util.List
         return resultRepo.findBySourceCourseId(courseId);
     }
 
