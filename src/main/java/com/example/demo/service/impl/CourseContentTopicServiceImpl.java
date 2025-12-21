@@ -11,6 +11,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class CourseContentTopicServiceImpl implements CourseContentTopicService {
+    
     private final CourseContentTopicRepository topicRepository;
 
     @Override
@@ -18,14 +19,24 @@ public class CourseContentTopicServiceImpl implements CourseContentTopicService 
         return topicRepository.save(topic);
     }
 
+    // Fix: Added updateTopic method missing earlier
     @Override
-    public List<CourseContentTopic> getTopicsForCourse(Long courseId) {
+    public CourseContentTopic updateTopic(Long id, CourseContentTopic topicDetails) {
+        CourseContentTopic topic = getTopicById(id);
+        topic.setName(topicDetails.getName());
+        topic.setDescription(topicDetails.getDescription());
+        return topicRepository.save(topic);
+    }
+
+    // Fix: Renamed to match Controller's call
+    @Override
+    public List<CourseContentTopic> getTopicsByCourseId(Long courseId) {
         return topicRepository.findByCourseId(courseId);
     }
 
     @Override
     public CourseContentTopic getTopicById(Long id) {
         return topicRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Topic not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Topic not found with id: " + id));
     }
 }
