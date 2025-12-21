@@ -32,24 +32,19 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-            .csrf(csrf -> csrf.disable()) // Swagger-la test panna ithu disable-la thaan irukkanum
+        http.csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                // Public endpoints - No Token Needed
-                .requestMatchers("/auth/**", "/status", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                // Registration, Login and Errors-ah public-ah allow pannuvom
+                .requestMatchers("/auth/**", "/error", "/status", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                 
-                // Role based protection - Must have ADMIN or EVALUATOR role
-                // Neenga University create panna thalaivara irukkanum (ADMIN/EVALUATOR)
-                .requestMatchers("/api/universities/**", "/api/transfers/**", "/api/courses/**").hasAnyRole("ADMIN", "EVALUATOR")
+                // Role based protection
+                .requestMatchers("/api/universities/**", "/api/transfers/**").hasAnyRole("ADMIN", "EVALUATOR")
                 
-                // Mattha ella requests-kum login/token mukkiyam
                 .anyRequest().authenticated()
             );
         
-        // JWT Filter-ah auth filter-ku munnadi vaikkanum
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-        
         return http.build();
     }
 }
