@@ -1,22 +1,12 @@
 package com.example.demo.entity;
-
 import jakarta.persistence.*;
 import lombok.Data;
 
-@Entity
-@Table(name = "universities")
-@Data
+@Entity @Table(name = "universities") @Data
 public class University {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     private String name;
-
-    @Column(nullable = false)
-    private String location;
-
-    @Column(length = 1000)
-    private String transferPolicyDetails;
+    private String country;
 }
