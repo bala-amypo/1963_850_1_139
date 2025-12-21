@@ -1,5 +1,6 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.dto.TransferEvaluationRequest;
 import com.example.demo.dto.TransferEvaluationResponse;
 import com.example.demo.entity.*;
 import com.example.demo.repository.*;
@@ -12,24 +13,36 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TransferEvaluationServiceImpl implements TransferEvaluationService {
 
+    // STRICT NAMING as per Step 0.1
     private final TransferEvaluationResultRepository resultRepo;
     private final CourseRepository courseRepo;
     private final CourseContentTopicRepository topicRepo;
     private final TransferRuleRepository ruleRepo;
 
     @Override
-    public TransferEvaluationResponse evaluateTransfer(Long sourceId, Long targetId) {
-        Course source = courseRepo.findById(sourceId).orElseThrow(() -> new RuntimeException("not found"));
-        Course target = courseRepo.findById(targetId).orElseThrow(() -> new RuntimeException("not found"));
+    public TransferEvaluationResponse evaluateTransfer(TransferEvaluationRequest request) {
+        // Fix: Call the evaluation logic using IDs from request DTO
+        return evaluateTransfer(request.getSourceCourseId(), request.getTargetCourseId());
+    }
 
+    @Override
+    public TransferEvaluationResponse evaluateTransfer(Long sourceId, Long targetId) {
+        Course source = courseRepo.findById(sourceId)
+                .orElseThrow(() -> new RuntimeException("not found"));
+        Course target = courseRepo.findById(targetId)
+                .orElseThrow(() -> new RuntimeException("not found"));
+
+        // Step 0.3: Check active status
         if (!source.getActive() || !target.getActive()) {
             throw new RuntimeException("active");
         }
 
+        // Use find method from TransferRuleRepository
         var rules = ruleRepo.findBySourceUniversityIdAndTargetUniversityIdAndActiveTrue(
                 source.getUniversity().getId(), target.getUniversity().getId());
 
         TransferEvaluationResponse response = new TransferEvaluationResponse();
+        
         if (rules.isEmpty()) {
             response.setEligible(false);
             response.setRemarks("No active transfer rule");
@@ -39,6 +52,7 @@ public class TransferEvaluationServiceImpl implements TransferEvaluationService 
         response.setEligible(true);
         response.setRemarks("Criteria met");
         
+        // Step 1.5: Save result
         TransferEvaluationResult res = new TransferEvaluationResult();
         res.setSourceCourse(source);
         res.setTargetCourse(target);
@@ -48,7 +62,6 @@ public class TransferEvaluationServiceImpl implements TransferEvaluationService 
         return response;
     }
 
-    // FIXED: Added missing method from interface
     @Override
     public List<TransferEvaluationResult> getEvaluationsByCourseId(Long courseId) {
         return resultRepo.findBySourceCourseId(courseId);
