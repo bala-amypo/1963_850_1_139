@@ -36,7 +36,10 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+                // Public endpoints
                 .requestMatchers("/api/auth/**", "/status", "/v3/api-docs/**", "/swagger-ui/**").permitAll()
+                // Dataset 8.2: Role based protection for transfers
+                .requestMatchers("/api/transfers/**").hasAnyRole("EVALUATOR", "ADMIN")
                 .anyRequest().authenticated()
             );
         
