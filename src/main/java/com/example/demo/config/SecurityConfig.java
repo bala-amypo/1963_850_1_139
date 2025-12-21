@@ -33,13 +33,16 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.disable())
+        http.csrf(csrf -> csrf.disable()) // Stateless API-ku CSRF disable pannanum
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                // Public endpoints
-                .requestMatchers("/api/auth/**", "/status", "/v3/api-docs/**", "/swagger-ui/**").permitAll()
-                // Dataset 8.2: Role based protection for transfers
+                // CHANGE: Inga thaan namma "/api/auth/**"-ah "/auth/**"-nu mathi irukkom
+                .requestMatchers("/auth/**", "/status", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                
+                // Role based protection
                 .requestMatchers("/api/transfers/**").hasAnyRole("EVALUATOR", "ADMIN")
+                
+                // Mattha ella requests-kum authentication mukkiyam
                 .anyRequest().authenticated()
             );
         
