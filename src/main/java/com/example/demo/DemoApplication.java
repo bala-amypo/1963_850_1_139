@@ -5,8 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 
 @SpringBootApplication
-@ServletComponentScan
-@ServletComponentScan
+@ServletComponentScan // <--- Ippo oru vaati thaan irukku, perfect!
 public class DemoApplication {
     public static void main(String[] args) {
         SpringApplication.run(DemoApplication.class, args);
