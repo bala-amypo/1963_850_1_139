@@ -19,16 +19,18 @@ public class CourseContentTopicServiceImpl implements CourseContentTopicService 
         return topicRepository.save(topic);
     }
 
-    // Fix: Added updateTopic method missing earlier
     @Override
     public CourseContentTopic updateTopic(Long id, CourseContentTopic topicDetails) {
         CourseContentTopic topic = getTopicById(id);
+        
+        // Ippo getName() and getDescription() error varaathu
         topic.setName(topicDetails.getName());
         topic.setDescription(topicDetails.getDescription());
+        topic.setWeightPercentage(topicDetails.getWeightPercentage());
+        
         return topicRepository.save(topic);
     }
 
-    // Fix: Renamed to match Controller's call
     @Override
     public List<CourseContentTopic> getTopicsByCourseId(Long courseId) {
         return topicRepository.findByCourseId(courseId);
