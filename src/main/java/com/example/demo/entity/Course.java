@@ -1,33 +1,37 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 
 @Entity
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "courses")
 public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String courseName; // Renamed from name
-    private String courseCode; // Renamed from code
-    private Integer creditHours; // Renamed from credits
-    
+    @Column(nullable = false)
+    private String courseName;
+
+    @Column(nullable = false, unique = true)
+    private String courseCode;
+
+    private Integer creditHours;
+
     @Column(length = 1000)
     private String description;
 
-    private Boolean active = true; // Added missing field
+    // Default value 'true' ensures new courses are active
+    private Boolean active = true; 
 
     @ManyToOne
     @JoinColumn(name = "university_id")
-    private University university; // Added missing relation for transfer logic
+    private University university;
 
     @ManyToOne
     @JoinColumn(name = "program_id")
