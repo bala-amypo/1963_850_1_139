@@ -4,19 +4,19 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
-@Table(name = "universities")
+@Table(name = "users")
 @Data
-public class University {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String name;
+    private String email;
 
     @Column(nullable = false)
-    private String location;
+    private String password;
 
-    @Column(length = 1000)
-    private String transferPolicyDetails;
+    @Column(nullable = false)
+    private String role; // ROLE_STUDENT or ROLE_ADMIN
 }
