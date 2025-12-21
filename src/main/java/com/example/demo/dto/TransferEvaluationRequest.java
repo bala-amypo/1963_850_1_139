@@ -11,5 +11,5 @@ public class TransferEvaluationRequest {
     private Long sourceUniversityId;
     private Long targetUniversityId;
     private Long courseId;
-    private Double gpa; // Extra info from supporting logic for credit transfer
+    private Double gpa; 
 }
