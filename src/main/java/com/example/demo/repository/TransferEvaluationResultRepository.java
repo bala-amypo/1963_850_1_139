@@ -5,4 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TransferEvaluationResultRepository extends JpaRepository<TransferEvaluationResult, Long> {
     // Basic CRUD is enough as per dataset
+    List<TransferEvaluationResult> findBySourceCourseId(Long courseId);
 }

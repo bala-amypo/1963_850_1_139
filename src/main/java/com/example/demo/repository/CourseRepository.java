@@ -14,4 +14,5 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     
     // For general lookup
     Optional<Course> findByCourseCodeIgnoreCase(String courseCode);
+    List<Course> findByUniversityIdAndActiveTrue(Long universityId);
 }
