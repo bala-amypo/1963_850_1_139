@@ -11,14 +11,11 @@ public class TransferRule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "source_university_id")
-    private University sourceUniversity;
+    // Direct IDs use pannuna error varathu (Strict Dataset Logic)
+    private Long sourceUniversityId; 
+    private Long targetUniversityId;
 
-    @ManyToOne
-    @JoinColumn(name = "target_university_id")
-    private University targetUniversity;
-
+    private Double minGpa; // Controller and Service logic-ku ithu thaan venum
     private Double minimumOverlapPercentage;
     private Integer creditHourTolerance;
     private Boolean active = true;

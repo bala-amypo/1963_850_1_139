@@ -5,6 +5,8 @@ import java.util.List;
 
 public interface CourseContentTopicService {
     CourseContentTopic createTopic(CourseContentTopic topic);
-    List<CourseContentTopic> getTopicsForCourse(Long courseId);
     CourseContentTopic getTopicById(Long id);
+    // Intha rendu methods thaan controller-ku venum
+    CourseContentTopic updateTopic(Long id, CourseContentTopic topic);
+    List<CourseContentTopic> getTopicsByCourseId(Long courseId); 
 }
