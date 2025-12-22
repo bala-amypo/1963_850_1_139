@@ -23,7 +23,7 @@ public class SwaggerConfig {
                 .addSecurityItem(new SecurityRequirement().addList("Bearer Authentication"))
                 .components(new Components().addSecuritySchemes("Bearer Authentication", createAPIKeyScheme()))
                 .servers(List.of(
-                        new Server().url("https://9216.pro604cr.amypo.ai/") 
+                        new Server().url("https://9378.pro604cr.amypo.ai/") 
                 ));
     }
 
