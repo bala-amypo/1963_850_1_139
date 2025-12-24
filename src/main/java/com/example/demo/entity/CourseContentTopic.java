@@ -1,25 +1,34 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 
 @Entity
 @Table(name = "course_content_topics")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class CourseContentTopic {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    // Field names-ah service-ku yetha maari maathiyachu
-    private String name; 
-    private String description;
+    
+    @Column(nullable = false)
+    private String topicName;
+    
     private Double weightPercentage;
+    
+    @ManyToOne
+    @JoinColumn(name = "course_id")
+    private Course course;
 
-    @Column(name = "course_id")
-    private Long courseId; // Relationship-ah vida ID handling compile-ku easy-ah irukum
+    public CourseContentTopic() {}
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    
+    public String getTopicName() { return topicName; }
+    public void setTopicName(String topicName) { this.topicName = topicName; }
+    
+    public Double getWeightPercentage() { return weightPercentage; }
+    public void setWeightPercentage(Double weightPercentage) { this.weightPercentage = weightPercentage; }
+    
+    public Course getCourse() { return course; }
+    public void setCourse(Course course) { this.course = course; }
 }
