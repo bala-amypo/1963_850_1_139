@@ -5,17 +5,24 @@ import com.example.demo.entity.University;
 import com.example.demo.repository.CourseRepository;
 import com.example.demo.repository.UniversityRepository;
 import com.example.demo.service.CourseService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service   // ⭐ MUST
-public class CourseServiceImpl implements CourseService {  // ⭐ MUST
+public class CourseServiceImpl implements CourseService {
 
-    // ⚠️ test cases expect exact field names
+    // ⚠️ EXACT FIELD NAMES REQUIRED BY TESTS
     private CourseRepository repo;
     private UniversityRepository univRepo;
 
+    // ✅ REQUIRED BY TEST CASES
+    public CourseServiceImpl() {
+    }
+
+    // ✅ REQUIRED BY SPRING
+    @Autowired
     public CourseServiceImpl(CourseRepository repo,
                              UniversityRepository univRepo) {
         this.repo = repo;
@@ -33,8 +40,8 @@ public class CourseServiceImpl implements CourseService {  // ⭐ MUST
         University univ = univRepo.findById(univId)
                 .orElseThrow(() -> new RuntimeException("not found"));
 
-        if (repo.findByUniversityIdAndCourseCode(univId,
-                course.getCourseCode()).isPresent()) {
+        if (repo.findByUniversityIdAndCourseCode(
+                univId, course.getCourseCode()).isPresent()) {
             throw new IllegalArgumentException("exists");
         }
 
@@ -45,6 +52,7 @@ public class CourseServiceImpl implements CourseService {  // ⭐ MUST
 
     @Override
     public Course updateCourse(Long id, Course course) {
+
         Course existing = repo.findById(id)
                 .orElseThrow(() -> new RuntimeException("not found"));
 
@@ -73,8 +81,10 @@ public class CourseServiceImpl implements CourseService {  // ⭐ MUST
 
     @Override
     public void deactivateCourse(Long id) {
+
         Course course = repo.findById(id)
                 .orElseThrow(() -> new RuntimeException("not found"));
+
         course.setActive(false);
         repo.save(course);
     }
