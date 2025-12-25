@@ -5,20 +5,28 @@ import com.example.demo.entity.University;
 import com.example.demo.repository.TransferRuleRepository;
 import com.example.demo.repository.UniversityRepository;
 import com.example.demo.service.TransferRuleService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service   // ⭐ MUST
 public class TransferRuleServiceImpl
-        implements TransferRuleService {   // ⭐ MUST
+        implements TransferRuleService {
 
-    // ⚠️ Test cases expect exact field names
+    // ⚠️ EXACT FIELD NAMES REQUIRED BY TESTS
     private TransferRuleRepository repo;
     private UniversityRepository univRepo;
 
-    public TransferRuleServiceImpl(TransferRuleRepository repo,
-                                   UniversityRepository univRepo) {
+    // ✅ REQUIRED BY TEST CASES
+    public TransferRuleServiceImpl() {
+    }
+
+    // ✅ REQUIRED BY SPRING
+    @Autowired
+    public TransferRuleServiceImpl(
+            TransferRuleRepository repo,
+            UniversityRepository univRepo) {
         this.repo = repo;
         this.univRepo = univRepo;
     }
@@ -26,14 +34,14 @@ public class TransferRuleServiceImpl
     @Override
     public TransferRule createRule(TransferRule rule) {
 
-        if (rule.getMinimumOverlapPercentage() == null ||
-                rule.getMinimumOverlapPercentage() < 0 ||
-                rule.getMinimumOverlapPercentage() > 100) {
+        if (rule.getMinimumOverlapPercentage() == null
+                || rule.getMinimumOverlapPercentage() < 0
+                || rule.getMinimumOverlapPercentage() > 100) {
             throw new IllegalArgumentException("0-100");
         }
 
-        if (rule.getCreditHourTolerance() != null &&
-                rule.getCreditHourTolerance() < 0) {
+        if (rule.getCreditHourTolerance() != null
+                && rule.getCreditHourTolerance() < 0) {
             throw new IllegalArgumentException(">= 0");
         }
 
@@ -42,6 +50,7 @@ public class TransferRuleServiceImpl
 
         University source = univRepo.findById(sourceId)
                 .orElseThrow(() -> new RuntimeException("not found"));
+
         University target = univRepo.findById(targetId)
                 .orElseThrow(() -> new RuntimeException("not found"));
 
@@ -54,12 +63,13 @@ public class TransferRuleServiceImpl
 
     @Override
     public TransferRule updateRule(Long id, TransferRule rule) {
+
         TransferRule existing = repo.findById(id)
                 .orElseThrow(() -> new RuntimeException("not found"));
 
         if (rule.getMinimumOverlapPercentage() != null) {
-            if (rule.getMinimumOverlapPercentage() < 0 ||
-                    rule.getMinimumOverlapPercentage() > 100) {
+            if (rule.getMinimumOverlapPercentage() < 0
+                    || rule.getMinimumOverlapPercentage() > 100) {
                 throw new IllegalArgumentException("0-100");
             }
             existing.setMinimumOverlapPercentage(
@@ -84,15 +94,21 @@ public class TransferRuleServiceImpl
     }
 
     @Override
-    public List<TransferRule> getRulesForUniversities(Long sourceId, Long targetId) {
-        return repo.findBySourceUniversityIdAndTargetUniversityIdAndActiveTrue(
-                sourceId, targetId);
+    public List<TransferRule> getRulesForUniversities(
+            Long sourceId,
+            Long targetId) {
+
+        return repo
+                .findBySourceUniversityIdAndTargetUniversityIdAndActiveTrue(
+                        sourceId, targetId);
     }
 
     @Override
     public void deactivateRule(Long id) {
+
         TransferRule rule = repo.findById(id)
                 .orElseThrow(() -> new RuntimeException("not found"));
+
         rule.setActive(false);
         repo.save(rule);
     }

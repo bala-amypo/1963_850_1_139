@@ -9,25 +9,33 @@ import com.example.demo.repository.CourseRepository;
 import com.example.demo.repository.TransferEvaluationResultRepository;
 import com.example.demo.repository.TransferRuleRepository;
 import com.example.demo.service.TransferEvaluationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
+@Service   // ⭐ MUST
 public class TransferEvaluationServiceImpl
         implements TransferEvaluationService {
 
-    // ⚠️ Test cases expect exact field names
+    // ⚠️ EXACT FIELD NAMES REQUIRED BY TESTS
     private TransferEvaluationResultRepository resultRepo;
     private CourseRepository courseRepo;
     private CourseContentTopicRepository topicRepo;
     private TransferRuleRepository ruleRepo;
 
+    // ✅ REQUIRED BY TEST CASES
+    public TransferEvaluationServiceImpl() {
+    }
+
+    // ✅ REQUIRED BY SPRING
+    @Autowired
     public TransferEvaluationServiceImpl(
             TransferEvaluationResultRepository resultRepo,
             CourseRepository courseRepo,
             CourseContentTopicRepository topicRepo,
             TransferRuleRepository ruleRepo) {
+
         this.resultRepo = resultRepo;
         this.courseRepo = courseRepo;
         this.topicRepo = topicRepo;
@@ -35,10 +43,13 @@ public class TransferEvaluationServiceImpl
     }
 
     @Override
-    public TransferEvaluationResult evaluateTransfer(Long sourceCourseId, Long targetCourseId) {
+    public TransferEvaluationResult evaluateTransfer(
+            Long sourceCourseId,
+            Long targetCourseId) {
 
         Course source = courseRepo.findById(sourceCourseId)
                 .orElseThrow(() -> new RuntimeException("not found"));
+
         Course target = courseRepo.findById(targetCourseId)
                 .orElseThrow(() -> new RuntimeException("not found"));
 
@@ -54,7 +65,9 @@ public class TransferEvaluationServiceImpl
         double overlap = 0.0;
         for (CourseContentTopic st : sourceTopics) {
             for (CourseContentTopic tt : targetTopics) {
-                if (st.getTopicName().equalsIgnoreCase(tt.getTopicName())) {
+                if (st.getTopicName()
+                        .equalsIgnoreCase(tt.getTopicName())) {
+
                     overlap += Math.min(
                             st.getWeightPercentage(),
                             tt.getWeightPercentage());
@@ -63,7 +76,9 @@ public class TransferEvaluationServiceImpl
         }
 
         int creditDiff =
-                Math.abs(source.getCreditHours() - target.getCreditHours());
+                Math.abs(
+                        source.getCreditHours()
+                                - target.getCreditHours());
 
         List<TransferRule> rules =
                 ruleRepo.findBySourceUniversityIdAndTargetUniversityIdAndActiveTrue(
@@ -80,6 +95,7 @@ public class TransferEvaluationServiceImpl
             for (TransferRule r : rules) {
                 if (overlap >= r.getMinimumOverlapPercentage()
                         && creditDiff <= r.getCreditHourTolerance()) {
+
                     eligible = true;
                     notes = "Eligible";
                     break;
@@ -87,14 +103,16 @@ public class TransferEvaluationServiceImpl
             }
         }
 
-        TransferEvaluationResult result = new TransferEvaluationResult();
+        TransferEvaluationResult result =
+                new TransferEvaluationResult();
+
         result.setSourceCourse(source);
         result.setTargetCourse(target);
         result.setOverlapPercentage(overlap);
         result.setCreditHourDifference(creditDiff);
         result.setIsEligibleForTransfer(eligible);
         result.setNotes(notes);
-        // ❌ DO NOT set evaluatedAt here (auto-generated)
+        // ✅ evaluatedAt AUTO-GENERATED in entity
 
         return resultRepo.save(result);
     }
