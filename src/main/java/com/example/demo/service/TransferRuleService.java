@@ -1,9 +1,10 @@
 package com.example.demo.service;
 
 import com.example.demo.entity.TransferRule;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+@Service
 public interface TransferRuleService {
 
     TransferRule createRule(TransferRule rule);
