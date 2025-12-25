@@ -9,15 +9,15 @@ import java.util.stream.Collectors;
 
 public class JwtTokenProvider {
 
-    // simple static secret (test purpose)
-    private static final String SECRET = "mysecretkeymysecretkeymysecretkey123";
-    private static final long VALIDITY = 1000 * 60 * 60; // 1 hour
+    private static final String SECRET =
+            "mysecretkeymysecretkeymysecretkey123";
+    private static final long VALIDITY =
+            1000 * 60 * 60; // 1 hour
 
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(SECRET.getBytes());
     }
 
-    // ✅ used in tests
     public String createToken(Long userId, String email, Set<String> roles) {
 
         Claims claims = Jwts.claims().setSubject(email);
@@ -35,7 +35,6 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    // ✅ test42 (invalid token → false)
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder()
@@ -48,7 +47,6 @@ public class JwtTokenProvider {
         }
     }
 
-    // ✅ test13, test29
     public String getEmail(String token) {
         return getAllClaims(token).getSubject();
     }
@@ -61,7 +59,6 @@ public class JwtTokenProvider {
         return (Long) val;
     }
 
-    // ✅ test29
     @SuppressWarnings("unchecked")
     public Set<String> getRoles(String token) {
         Object roles = getAllClaims(token).get("roles");
