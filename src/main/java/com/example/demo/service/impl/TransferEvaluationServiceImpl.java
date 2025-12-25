@@ -11,12 +11,11 @@ import com.example.demo.repository.TransferRuleRepository;
 import com.example.demo.service.TransferEvaluationService;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
-@Service   // ⭐ MUST
+@Service
 public class TransferEvaluationServiceImpl
-        implements TransferEvaluationService {   // ⭐ MUST
+        implements TransferEvaluationService {
 
     // ⚠️ Test cases expect exact field names
     private TransferEvaluationResultRepository resultRepo;
@@ -95,7 +94,7 @@ public class TransferEvaluationServiceImpl
         result.setCreditHourDifference(creditDiff);
         result.setIsEligibleForTransfer(eligible);
         result.setNotes(notes);
-        result.setEvaluatedAt(LocalDateTime.now());
+        // ❌ DO NOT set evaluatedAt here (auto-generated)
 
         return resultRepo.save(result);
     }
