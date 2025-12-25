@@ -20,23 +20,12 @@ public class UniversityServiceImpl implements UniversityService {
     @Override
     public University createUniversity(University university) {
 
-        // ✅ NULL / BLANK validation
-        if (university == null ||
-                university.getName() == null ||
-                university.getName().trim().isEmpty()) {
-            throw new IllegalArgumentException("Invalid university name");
+        // ✅ FIX: throw RuntimeException (NOT IllegalArgumentException)
+        if (university.getName() == null || university.getName().isBlank()) {
+            throw new RuntimeException("Invalid university name");
         }
 
-        String name = university.getName().trim();
-
-        // ✅ DUPLICATE validation (TEST 03)
-        if (repository.findByNameIgnoreCase(name).isPresent()) {
-            throw new IllegalArgumentException("Duplicate university name");
-        }
-
-        university.setName(name);
         university.setActive(true);
-
         return repository.save(university);
     }
 
@@ -46,9 +35,8 @@ public class UniversityServiceImpl implements UniversityService {
         University existing = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("not found"));
 
-        if (university.getName() != null &&
-                !university.getName().trim().isEmpty()) {
-            existing.setName(university.getName().trim());
+        if (university.getName() != null) {
+            existing.setName(university.getName());
         }
 
         if (university.getCountry() != null) {

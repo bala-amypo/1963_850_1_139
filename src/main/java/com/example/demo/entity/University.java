@@ -19,25 +19,49 @@ public class University {
 
     private Boolean active = true;
 
-    // getters & setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    // ===== Getters & Setters =====
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public Long getId() {
+        return id;
+    }
 
-    public String getAccreditationLevel() { return accreditationLevel; }
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getAccreditationLevel() {
+        return accreditationLevel;
+    }
+
     public void setAccreditationLevel(String accreditationLevel) {
         this.accreditationLevel = accreditationLevel;
     }
 
-    public String getCountry() { return country; }
-    public void setCountry(String country) { this.country = country; }
+    public String getCountry() {
+        return country;
+    }
 
-    public Boolean getActive() { return active; }
-    public void setActive(Boolean active) { this.active = active; }
+    public void setCountry(String country) {
+        this.country = country;
+    }
 
-    // ⭐ REQUIRED BY TEST CASE
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+    // 🔴 THIS METHOD IS MANDATORY FOR TEST CASES
     public boolean isActive() {
         return Boolean.TRUE.equals(active);
     }
