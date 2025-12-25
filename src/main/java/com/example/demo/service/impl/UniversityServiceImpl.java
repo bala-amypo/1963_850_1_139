@@ -7,17 +7,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
+@Service   // ⭐ MUST
 public class UniversityServiceImpl implements UniversityService {
 
-    // ⚠️ Test expects this exact field name
+    // ⚠️ Test cases expect exact field name
     private UniversityRepository repository;
 
-    // ⭐ REQUIRED NO-ARG CONSTRUCTOR (FOR TESTS)
-    public UniversityServiceImpl() {
-    }
-
-    // ⭐ Constructor injection for Spring
     public UniversityServiceImpl(UniversityRepository repository) {
         this.repository = repository;
     }
@@ -25,12 +20,23 @@ public class UniversityServiceImpl implements UniversityService {
     @Override
     public University createUniversity(University university) {
 
-        if (university.getName() == null ||
+        // ✅ NULL / BLANK validation
+        if (university == null ||
+                university.getName() == null ||
                 university.getName().trim().isEmpty()) {
-            throw new IllegalArgumentException("name");
+            throw new IllegalArgumentException("Invalid university name");
         }
 
+        String name = university.getName().trim();
+
+        // ✅ DUPLICATE validation (TEST 03)
+        if (repository.findByNameIgnoreCase(name).isPresent()) {
+            throw new IllegalArgumentException("Duplicate university name");
+        }
+
+        university.setName(name);
         university.setActive(true);
+
         return repository.save(university);
     }
 
@@ -40,8 +46,9 @@ public class UniversityServiceImpl implements UniversityService {
         University existing = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("not found"));
 
-        if (university.getName() != null) {
-            existing.setName(university.getName());
+        if (university.getName() != null &&
+                !university.getName().trim().isEmpty()) {
+            existing.setName(university.getName().trim());
         }
 
         if (university.getCountry() != null) {
@@ -49,8 +56,7 @@ public class UniversityServiceImpl implements UniversityService {
         }
 
         if (university.getAccreditationLevel() != null) {
-            existing.setAccreditationLevel(
-                    university.getAccreditationLevel());
+            existing.setAccreditationLevel(university.getAccreditationLevel());
         }
 
         return repository.save(existing);
