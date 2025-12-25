@@ -2,11 +2,13 @@ package com.example.demo.security;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Component   // ⭐ THIS IS THE FIX
 public class JwtTokenProvider {
 
     private static final String SECRET =
