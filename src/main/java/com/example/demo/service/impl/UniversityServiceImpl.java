@@ -7,12 +7,17 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service   // ⭐ MUST
+@Service
 public class UniversityServiceImpl implements UniversityService {
 
-    // ⚠️ Test cases expect exact field name
+    // ⚠️ Test expects this exact field name
     private UniversityRepository repository;
 
+    // ⭐ REQUIRED NO-ARG CONSTRUCTOR (FOR TESTS)
+    public UniversityServiceImpl() {
+    }
+
+    // ⭐ Constructor injection for Spring
     public UniversityServiceImpl(UniversityRepository repository) {
         this.repository = repository;
     }
@@ -20,9 +25,9 @@ public class UniversityServiceImpl implements UniversityService {
     @Override
     public University createUniversity(University university) {
 
-        // ✅ FIX: throw RuntimeException (NOT IllegalArgumentException)
-        if (university.getName() == null || university.getName().isBlank()) {
-            throw new RuntimeException("Invalid university name");
+        if (university.getName() == null ||
+                university.getName().trim().isEmpty()) {
+            throw new IllegalArgumentException("name");
         }
 
         university.setActive(true);
@@ -44,7 +49,8 @@ public class UniversityServiceImpl implements UniversityService {
         }
 
         if (university.getAccreditationLevel() != null) {
-            existing.setAccreditationLevel(university.getAccreditationLevel());
+            existing.setAccreditationLevel(
+                    university.getAccreditationLevel());
         }
 
         return repository.save(existing);
