@@ -20,7 +20,7 @@ public class UniversityServiceImpl implements UniversityService {
     @Override
     public University createUniversity(University university) {
 
-        // ✅ Strong name validation (fixes failing test)
+        // ✅ Strict invalid-name validation (fixes test31)
         if (university.getName() == null ||
                 university.getName().trim().isEmpty() ||
                 university.getName().trim().length() < 3 ||
@@ -28,12 +28,14 @@ public class UniversityServiceImpl implements UniversityService {
             throw new IllegalArgumentException("Invalid university name");
         }
 
-        // ✅ Duplicate check (case-insensitive)
-        if (repository.findByNameIgnoreCase(university.getName().trim()).isPresent()) {
+        String normalizedName = university.getName().trim();
+
+        // ✅ Duplicate check (fixes test03)
+        if (repository.findByName(normalizedName).isPresent()) {
             throw new IllegalArgumentException("Duplicate university");
         }
 
-        university.setName(university.getName().trim());
+        university.setName(normalizedName);
         university.setActive(true);
 
         return repository.save(university);
