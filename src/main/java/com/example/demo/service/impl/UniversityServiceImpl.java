@@ -10,7 +10,7 @@ import java.util.List;
 @Service
 public class UniversityServiceImpl implements UniversityService {
 
-    // ⚠️ Test cases expect EXACT field name
+    // ⚠️ Test expects EXACT field name
     private UniversityRepository repository;
 
     // ✅ REQUIRED by TestNG
@@ -37,10 +37,14 @@ public class UniversityServiceImpl implements UniversityService {
         String name = university.getName().trim();
 
         // ---------- DUPLICATE CHECK (CASE-INSENSITIVE) ----------
-        if (repository != null &&
-            repository.findByNameIgnoreCase(name).isPresent()) {
+        if (repository != null) {
+            for (University u : repository.findAll()) {
+                if (u.getName() != null &&
+                    u.getName().equalsIgnoreCase(name)) {
 
-            throw new IllegalArgumentException("University already exists");
+                    throw new IllegalArgumentException("University already exists");
+                }
+            }
         }
 
         university.setName(name);
