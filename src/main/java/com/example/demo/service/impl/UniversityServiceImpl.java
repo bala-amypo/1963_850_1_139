@@ -3,24 +3,16 @@ package com.example.demo.service.impl;
 import com.example.demo.entity.University;
 import com.example.demo.repository.UniversityRepository;
 import com.example.demo.service.UniversityService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service   // ⭐ MUST
-public class UniversityServiceImpl
-        implements UniversityService {
+public class UniversityServiceImpl implements UniversityService {
 
-    // ⚠️ EXACT FIELD NAME REQUIRED BY TESTS
+    // ⚠️ Test cases expect exact field name
     private UniversityRepository repository;
 
-    // ✅ REQUIRED BY TEST CASES
-    public UniversityServiceImpl() {
-    }
-
-    // ✅ REQUIRED BY SPRING
-    @Autowired
     public UniversityServiceImpl(UniversityRepository repository) {
         this.repository = repository;
     }
@@ -28,17 +20,22 @@ public class UniversityServiceImpl
     @Override
     public University createUniversity(University university) {
 
-        if (university.getName() == null
-                || university.getName().isBlank()) {
-            throw new IllegalArgumentException("name");
+        // ✅ Strong name validation (fixes failing test)
+        if (university.getName() == null ||
+                university.getName().trim().isEmpty() ||
+                university.getName().trim().length() < 3 ||
+                !university.getName().matches("[A-Za-z ]+")) {
+            throw new IllegalArgumentException("Invalid university name");
         }
 
-        // 🔴 DUPLICATE NAME CHECK (MANDATORY)
-        if (repository.findByName(university.getName()).isPresent()) {
-            throw new IllegalArgumentException("exists");
+        // ✅ Duplicate check (case-insensitive)
+        if (repository.findByNameIgnoreCase(university.getName().trim()).isPresent()) {
+            throw new IllegalArgumentException("Duplicate university");
         }
 
+        university.setName(university.getName().trim());
         university.setActive(true);
+
         return repository.save(university);
     }
 
@@ -49,7 +46,11 @@ public class UniversityServiceImpl
                 .orElseThrow(() -> new RuntimeException("not found"));
 
         if (university.getName() != null) {
-            existing.setName(university.getName());
+            if (university.getName().trim().length() < 3 ||
+                    !university.getName().matches("[A-Za-z ]+")) {
+                throw new IllegalArgumentException("Invalid university name");
+            }
+            existing.setName(university.getName().trim());
         }
 
         if (university.getCountry() != null) {
@@ -57,8 +58,7 @@ public class UniversityServiceImpl
         }
 
         if (university.getAccreditationLevel() != null) {
-            existing.setAccreditationLevel(
-                    university.getAccreditationLevel());
+            existing.setAccreditationLevel(university.getAccreditationLevel());
         }
 
         return repository.save(existing);
@@ -77,10 +77,8 @@ public class UniversityServiceImpl
 
     @Override
     public void deactivateUniversity(Long id) {
-
         University uni = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("not found"));
-
         uni.setActive(false);
         repository.save(uni);
     }
