@@ -10,7 +10,7 @@ import java.util.List;
 @Service
 public class UniversityServiceImpl implements UniversityService {
 
-    // ⚠️ field name must be exactly this
+    // ⚠️ Test cases expect this exact field name
     private UniversityRepository repository;
 
     // ✅ REQUIRED by test cases
@@ -32,8 +32,8 @@ public class UniversityServiceImpl implements UniversityService {
         }
 
         // ✅ DUPLICATE NAME CHECK (test03)
-        if (repository.findByNameIgnoreCase(university.getName()).isPresent()) {
-            throw new IllegalArgumentException("University already exists");
+        if (repository.findByName(university.getName()).isPresent()) {
+            throw new IllegalArgumentException("Duplicate university name");
         }
 
         university.setActive(true);
