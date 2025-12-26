@@ -26,25 +26,24 @@ public class AuthController {
         this.tokenProvider = tokenProvider;
     }
 
-    // ✅ REGISTER
     @PostMapping("/register")
     public String register(@RequestBody AuthRequest request) {
 
-        // ✅ Hidden test expects duplicate email check
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("Email already exists");
+            throw new RuntimeException("Email already exists");
         }
 
-        User user = new User();
-        user.setEmail(request.getEmail());
-        user.setPassword(encoder.encode(request.getPassword()));
-        user.setRoles(Set.of("ROLE_USER"));
+        User user = new User(
+                request.getEmail(),
+                encoder.encode(request.getPassword()),
+                Set.of("ROLE_USER"),
+                "USER"
+        );
 
         userRepository.save(user);
         return "User registered";
     }
 
-    // ✅ LOGIN
     @PostMapping("/login")
     public AuthResponse login(@RequestBody AuthRequest request) {
 
@@ -61,11 +60,6 @@ public class AuthController {
                 user.getRoles()
         );
 
-        // ✅ Hidden tests expect token + email + roles
-        return new AuthResponse(
-                token,
-                user.getEmail(),
-                user.getRoles()
-        );
+        return new AuthResponse(token);
     }
 }
