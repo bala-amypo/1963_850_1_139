@@ -3,23 +3,21 @@ package com.example.demo.service.impl;
 import com.example.demo.entity.University;
 import com.example.demo.repository.UniversityRepository;
 import com.example.demo.service.UniversityService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service   // ⭐ MUST
+@Service
 public class UniversityServiceImpl implements UniversityService {
 
-    // ⚠️ Test cases expect exact field name
-    @Autowired
+    // ⚠️ field name must be exactly this
     private UniversityRepository repository;
 
-    // ⭐ REQUIRED by test cases
+    // ✅ REQUIRED by test cases
     public UniversityServiceImpl() {
     }
 
-    // ⭐ Used by Spring
+    // ✅ Used by Spring
     public UniversityServiceImpl(UniversityRepository repository) {
         this.repository = repository;
     }
@@ -27,26 +25,18 @@ public class UniversityServiceImpl implements UniversityService {
     @Override
     public University createUniversity(University university) {
 
-        // ❌ Invalid name check (test31)
-        if (university == null ||
-            university.getName() == null ||
+        // ✅ INVALID NAME CHECK (test31)
+        if (university.getName() == null ||
             university.getName().trim().isEmpty()) {
             throw new IllegalArgumentException("Invalid university name");
         }
 
-        String name = university.getName().trim();
+        // ✅ DUPLICATE NAME CHECK (test03)
+        if (repository.findByNameIgnoreCase(university.getName()).isPresent()) {
+            throw new IllegalArgumentException("University already exists");
+        }
 
-        // ❌ Duplicate name check (test03)
-        repository.findAll().forEach(u -> {
-            if (u.getName() != null &&
-                u.getName().equalsIgnoreCase(name)) {
-                throw new IllegalArgumentException("Duplicate university name");
-            }
-        });
-
-        university.setName(name);
         university.setActive(true);
-
         return repository.save(university);
     }
 
@@ -57,8 +47,12 @@ public class UniversityServiceImpl implements UniversityService {
                 .orElseThrow(() -> new RuntimeException("not found"));
 
         if (university.getName() != null &&
-            !university.getName().trim().isEmpty()) {
-            existing.setName(university.getName().trim());
+            university.getName().trim().isEmpty()) {
+            throw new IllegalArgumentException("Invalid university name");
+        }
+
+        if (university.getName() != null) {
+            existing.setName(university.getName());
         }
 
         if (university.getCountry() != null) {
@@ -66,8 +60,7 @@ public class UniversityServiceImpl implements UniversityService {
         }
 
         if (university.getAccreditationLevel() != null) {
-            existing.setAccreditationLevel(
-                    university.getAccreditationLevel());
+            existing.setAccreditationLevel(university.getAccreditationLevel());
         }
 
         return repository.save(existing);
