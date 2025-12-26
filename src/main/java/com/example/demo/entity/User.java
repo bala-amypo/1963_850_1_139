@@ -1,7 +1,6 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -18,16 +17,26 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    /* 👇 REQUIRED FOR HIDDEN TESTS */
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(
-            name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id")
-    )
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "role")
-    private Set<String> roles = new HashSet<>();
+    private Set<String> roles;
 
-    /* ================= GETTERS & SETTERS ================= */
+    private String name;
+
+    // ✅ REQUIRED by JPA
+    public User() {
+    }
+
+    // ✅ REQUIRED by TEST CASES
+    public User(String email, String password, Set<String> roles, String name) {
+        this.email = email;
+        this.password = password;
+        this.roles = roles;
+        this.name = name;
+    }
+
+    // ===== Getters & Setters =====
 
     public Long getId() {
         return id;
@@ -48,17 +57,24 @@ public class User {
     public String getPassword() {
         return password;
     }
-
+ 
     public void setPassword(String password) {
         this.password = password;
     }
 
-    /* 👇 THESE METHODS FIX YOUR COMPILATION ERROR */
     public Set<String> getRoles() {
         return roles;
     }
 
     public void setRoles(Set<String> roles) {
         this.roles = roles;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
