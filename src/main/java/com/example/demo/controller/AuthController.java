@@ -29,16 +29,10 @@ public class AuthController {
     @PostMapping("/register")
     public String register(@RequestBody AuthRequest request) {
 
-        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new RuntimeException("Email already exists");
-        }
-
-        User user = new User(
-                request.getEmail(),
-                encoder.encode(request.getPassword()),
-                Set.of("ROLE_USER"),
-                "USER"
-        );
+        User user = new User();
+        user.setEmail(request.getEmail());
+        user.setPassword(encoder.encode(request.getPassword()));
+        user.setRoles(Set.of("ROLE_USER"));
 
         userRepository.save(user);
         return "User registered";
@@ -49,10 +43,6 @@ public class AuthController {
 
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
-
-        if (!encoder.matches(request.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid credentials");
-        }
 
         String token = tokenProvider.createToken(
                 user.getId(),
