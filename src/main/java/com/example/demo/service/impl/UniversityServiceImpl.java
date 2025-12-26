@@ -1,3 +1,15 @@
+package com.example.demo.service.impl;
+
+// ✅ REQUIRED IMPORTS
+import com.example.demo.entity.University;
+import com.example.demo.repository.UniversityRepository;
+import com.example.demo.service.UniversityService;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
 @Service
 public class UniversityServiceImpl implements UniversityService {
 
@@ -9,7 +21,7 @@ public class UniversityServiceImpl implements UniversityService {
     }
 
     // ✅ REQUIRED: Spring DI constructor
-    @org.springframework.beans.factory.annotation.Autowired
+    @Autowired
     public UniversityServiceImpl(UniversityRepository repository) {
         this.repository = repository;
     }
