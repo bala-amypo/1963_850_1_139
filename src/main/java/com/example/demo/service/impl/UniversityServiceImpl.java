@@ -1,23 +1,15 @@
-package com.example.demo.service.impl;
-
-import com.example.demo.entity.University;
-import com.example.demo.repository.UniversityRepository;
-import com.example.demo.service.UniversityService;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-
 @Service
 public class UniversityServiceImpl implements UniversityService {
 
     // ⚠️ Test cases expect exact field name
     private UniversityRepository repository;
 
-    // ✅ REQUIRED: no-args constructor (tests instantiate with new UniversityServiceImpl())
+    // ✅ REQUIRED: no-args constructor (used by TestNG)
     public UniversityServiceImpl() {
     }
 
-    // Optional constructor (Spring usage)
+    // ✅ REQUIRED: Spring DI constructor
+    @org.springframework.beans.factory.annotation.Autowired
     public UniversityServiceImpl(UniversityRepository repository) {
         this.repository = repository;
     }
@@ -25,14 +17,14 @@ public class UniversityServiceImpl implements UniversityService {
     @Override
     public University createUniversity(University university) {
 
-        // ✅ FIX #1: Invalid name check (test31)
+        // test31: invalid name
         if (university == null ||
             university.getName() == null ||
             university.getName().trim().isEmpty()) {
             throw new IllegalArgumentException("Name required");
         }
 
-        // ✅ FIX #2: Duplicate name check (test03)
+        // test03: duplicate name
         if (repository.findByName(university.getName()).isPresent()) {
             throw new IllegalArgumentException("exists");
         }
