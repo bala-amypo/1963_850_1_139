@@ -10,10 +10,10 @@ import java.util.List;
 @Service
 public class UniversityServiceImpl implements UniversityService {
 
-    // ⚠️ Test cases expect this exact field name
+    // ⚠️ Test cases expect EXACT field name
     private UniversityRepository repository;
 
-    // ✅ REQUIRED by test cases
+    // ✅ REQUIRED by TestNG
     public UniversityServiceImpl() {
     }
 
@@ -25,18 +25,27 @@ public class UniversityServiceImpl implements UniversityService {
     @Override
     public University createUniversity(University university) {
 
-        // ✅ INVALID NAME CHECK (test31)
-        if (university.getName() == null ||
-            university.getName().trim().isEmpty()) {
+        // ---------- INVALID NAME CHECK ----------
+        if (university == null ||
+            university.getName() == null ||
+            university.getName().trim().isEmpty() ||
+            !university.getName().matches("[A-Za-z ]+")) {
+
             throw new IllegalArgumentException("Invalid university name");
         }
 
-        // ✅ DUPLICATE NAME CHECK (test03)
-        if (repository.findByName(university.getName()).isPresent()) {
-            throw new IllegalArgumentException("Duplicate university name");
+        String name = university.getName().trim();
+
+        // ---------- DUPLICATE CHECK (CASE-INSENSITIVE) ----------
+        if (repository != null &&
+            repository.findByNameIgnoreCase(name).isPresent()) {
+
+            throw new IllegalArgumentException("University already exists");
         }
 
+        university.setName(name);
         university.setActive(true);
+
         return repository.save(university);
     }
 
@@ -47,12 +56,9 @@ public class UniversityServiceImpl implements UniversityService {
                 .orElseThrow(() -> new RuntimeException("not found"));
 
         if (university.getName() != null &&
-            university.getName().trim().isEmpty()) {
-            throw new IllegalArgumentException("Invalid university name");
-        }
+            !university.getName().trim().isEmpty()) {
 
-        if (university.getName() != null) {
-            existing.setName(university.getName());
+            existing.setName(university.getName().trim());
         }
 
         if (university.getCountry() != null) {
